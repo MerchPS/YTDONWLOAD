@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YTDNW - YouTube Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .fade-enter {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .fade-enter-active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-3xl font-bold mb-4 text-blue-400">YouTube Downloader</h1>
+    <input id="yt-url" type="text" placeholder="Enter YouTube URL" class="p-2 w-80 text-black rounded-md mb-4">
+    <button onclick="fetchVideoInfo()" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Get Video Info</button>
+    <div id="loading" class="hidden text-blue-400 mt-4">Loading...</div>
+    <div id="result" class="fade-enter mt-4"></div>
+    
+    <script>
+        async function fetchVideoInfo() {
+            const url = document.getElementById("yt-url").value;
+            if (!url) return alert("Masukkan URL terlebih dahulu");
+            
+            document.getElementById("loading").classList.remove("hidden");
+            document.getElementById("result").innerHTML = "";
+            
+            try {
+                const response = await axios.get(`https://ditzdevs-ytdl-api.hf.space/api/info?url=${encodeURIComponent(url)}`);
+                
+                document.getElementById("loading").classList.add("hidden");
+                if (response.data && response.data.title) {
+                    let optionsHtml = `<p class='text-lg font-bold'>${response.data.title}</p>`;
+                    
+                    optionsHtml += `<button onclick='downloadMP3("${url}")' class='bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded mt-2'>Download MP3</button>`;
+                    
+                    response.data.availableFormats.forEach(format => {
+                        optionsHtml += `<button onclick='downloadMP4("${url}", "${format.reso}")' class='bg-gray-700 hover:bg-gray-900 text-white py-2 px-4 rounded mt-2'>Download ${format.reso} MP4</button>`;
+                    });
+                    
+                    document.getElementById("result").innerHTML = optionsHtml;
+                    document.getElementById("result").classList.add("fade-enter-active");
+                } else {
+                    document.getElementById("result").innerHTML = "<p class='text-red-400'>Gagal mengambil data.</p>";
+                }
+            } catch (error) {
+                document.getElementById("loading").classList.add("hidden");
+                document.getElementById("result").innerHTML = "<p class='text-red-400'>Error dalam pengambilan data.</p>";
+            }
+        }
+
+        function downloadMP3(url) {
+            window.open(`https://ditzdevs-ytdl-api.hf.space/api/ytmp3?url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function downloadMP4(url, reso) {
+            window.open(`https://ditzdevs-ytdl-api.hf.space/api/ytmp4?url=${encodeURIComponent(url)}&reso=${reso}`, '_blank');
+        }
+    </script>
+</body>
+</html>
