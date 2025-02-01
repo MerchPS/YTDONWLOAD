@@ -39,6 +39,11 @@ async function fetchVideoInfo() {
             <button onclick="downloadMP3('${urlInput}')" class='bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded mt-2'>Download MP3</button>
             <button onclick="downloadMP4('${urlInput}')" class='bg-yellow-500 hover:bg-yellow-700 text-white py-2 px-4 rounded mt-2'>Download MP4</button>
         `;
+        
+        // Add fade-in effect to resultElement
+        resultElement.classList.remove('fade-enter');
+        resultElement.classList.add('fade-enter-active');
+        
     } catch (error) {
         loadingElement.classList.add('hidden');
         resultElement.innerHTML = `<p class='text-red-500'>Failed to fetch video info.</p>`;
