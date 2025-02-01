@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const debug = true; // Ubah ke false jika tidak ingin melihat log di halaman
+    const debug = true; // Aktifkan debug mode (ubah ke false jika tidak perlu)
 
     const inputUrl = document.getElementById("urlInput");
     const getInfoBtn = document.getElementById("getInfoBtn");
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${mediaOptions}
             `;
 
-            // Tambahkan event listener ke tombol download
+            // Event listener tombol download
             document.querySelectorAll(".downloadBtn").forEach(button => {
                 button.addEventListener("click", (event) => {
                     const downloadUrl = event.target.getAttribute("data-url");
@@ -73,13 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "download.mp4"; // Bisa diubah sesuai format file
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        window.open(url, "_blank"); // Membuka di tab baru untuk menghindari error 403
 
-        alert("Sukses Mendownload!");
+        alert("Download dimulai! Jika tidak berjalan, coba klik kanan > Save As.");
     }
 });
