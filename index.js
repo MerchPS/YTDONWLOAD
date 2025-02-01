@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('fetch-info').addEventListener('click', fetchVideoInfo);
+});
+
 async function fetchVideoInfo() {
     const urlInput = document.getElementById('yt-url').value;
     const loadingElement = document.getElementById('loading');
@@ -12,7 +16,7 @@ async function fetchVideoInfo() {
     resultElement.innerHTML = '';
     
     try {
-        const response = await fetch('https://ytdonwload-git-main-merchps-projects.vercel.app/api/info', {
+        const response = await fetch('/api/info', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: urlInput })
@@ -38,9 +42,9 @@ async function fetchVideoInfo() {
 }
 
 function downloadMP3(url) {
-    window.location.href = `https://ytdonwload-git-main-merchps-projects.vercel.app/api/ytmp3?url=${encodeURIComponent(url)}`;
+    window.location.href = `/api/ytmp3?url=${encodeURIComponent(url)}`;
 }
 
 function downloadMP4(url) {
-    window.location.href = `https://ytdonwload-git-main-merchps-projects.vercel.app/api/ytmp4?url=${encodeURIComponent(url)}&reso=720p`;
+    window.location.href = `/api/ytmp4?url=${encodeURIComponent(url)}&reso=720p`;
 }
