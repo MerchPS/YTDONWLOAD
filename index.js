@@ -1,98 +1,75 @@
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('fetch-info').addEventListener('click', fetchVideoInfo);
-});
+document.addEventListener("DOMContentLoaded", () => {
+    const debug = true; // Set ke false jika tidak ingin melihat log di halaman
 
-async function fetchVideoInfo() {
-    const urlInput = document.getElementById('yt-url').value;
-    const loadingElement = document.getElementById('loading');
-    const resultElement = document.getElementById('result');
+    const inputUrl = document.getElementById("urlInput");
+    const getInfoBtn = document.getElementById("getInfoBtn");
+    const resultContainer = document.getElementById("result");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const debugContainer = document.getElementById("debug"); // Untuk menampilkan debug info
+    let downloadUrl = ""; // Akan menyimpan URL hasil dari API
 
-    if (!urlInput) {
-        alert('Silakan masukkan URL YouTube');
-        return;
-    }
-
-    loadingElement.classList.remove('hidden');
-    resultElement.innerHTML = '';
-
-    try {
-        let response = await fetch(`https://ditzdevs-ytdl-api.hf.space/api/info?url=${encodeURIComponent(urlInput)}`);
-
-        if (!response.ok) {
-            response = await fetch('https://ditzdevs-ytdl-api.hf.space/api/info', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: urlInput })
-            });
-        }
-
-        const data = await response.json();
-        loadingElement.classList.add('hidden');
-
-        if (data.error) {
-            resultElement.innerHTML = `<p class='text-red-500'>Error: ${data.error}</p>`;
+    getInfoBtn.addEventListener("click", async () => {
+        const videoUrl = inputUrl.value.trim();
+        if (!videoUrl) {
+            alert("Masukkan URL video terlebih dahulu!");
             return;
         }
 
-        const title = data.title || "Judul tidak ditemukan";
-        const thumbnailUrl = data.thumbnail ? data.thumbnail[0].url : '';
+        try {
+            resultContainer.innerHTML = "<p>Loading...</p>";
+            const response = await fetch("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", {
+                method: "POST",
+                headers: {
+                    "x-rapidapi-key": "7de39da1f0msh27faaa990ff94d0p1e16c2jsn60b9ba7db702",
+                    "x-rapidapi-host": "social-download-all-in-one.p.rapidapi.com",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ url: videoUrl })
+            });
 
-        resultElement.innerHTML = `
-            <h2 class='text-xl font-bold text-blue-400'>${title}</h2>
-            <img src="${thumbnailUrl}" class="thumbnail"/>
-            <button onclick="downloadMP3('${urlInput}')" class='btn-green'>Download MP3</button>
-            <button onclick="downloadMP4('${urlInput}')" class='btn-yellow'>Download MP4</button>
-        `;
-    } catch (error) {
-        loadingElement.classList.add('hidden');
-        resultElement.innerHTML = `<p class='text-red-500'>Gagal mengambil info video.</p>`;
-    }
-}
+            const data = await response.json();
 
-async function downloadMP3(url) {
-    try {
-        const response = await fetch(`https://ditzdevs-ytdl-api.hf.space/api/ytmp3?url=${encodeURIComponent(url)}`);
-        const data = await response.json();
+            if (debug) {
+                debugContainer.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
 
-        if (data.status && data.download && data.download.downloadUrl) {
-            const downloadLink = document.createElement("a");
-            downloadLink.href = data.download.downloadUrl;
-            downloadLink.download = `${data.download.title}.mp3`; 
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+            if (!data || !data.result || !data.result[0]) {
+                resultContainer.innerHTML = "<p>Gagal mendapatkan data video.</p>";
+                return;
+            }
 
-            setTimeout(() => {
-                alert("✅ Sukses mendownload MP3!");
-            }, 500);
-        } else {
-            alert("❌ Gagal mendapatkan link MP3.");
+            // Ambil data pertama (bisa disesuaikan jika ada banyak format)
+            const videoData = data.result[0];
+            downloadUrl = videoData.url;
+
+            resultContainer.innerHTML = `
+                <h3>${videoData.title || "Judul Tidak Tersedia"}</h3>
+                <img src="${videoData.thumbnail || ""}" alt="Thumbnail" style="width:100%; max-width:400px; border-radius:10px;">
+                <p>Format: ${videoData.type || "Tidak diketahui"}</p>
+                <button id="startDownload">Download</button>
+            `;
+
+            // Event listener untuk download button
+            document.getElementById("startDownload").addEventListener("click", startDownload);
+        } catch (error) {
+            console.error("Error:", error);
+            resultContainer.innerHTML = "<p>Terjadi kesalahan. Coba lagi.</p>";
         }
-    } catch (error) {
-        alert("❌ Error saat mengunduh MP3.");
-    }
-}
+    });
 
-async function downloadMP4(url) {
-    try {
-        const response = await fetch(`https://ditzdevs-ytdl-api.hf.space/api/ytmp4?url=${encodeURIComponent(url)}&reso=720p`);
-        const data = await response.json();
-
-        if (data.status && data.download && data.download.downloadUrl) {
-            const downloadLink = document.createElement("a");
-            downloadLink.href = data.download.downloadUrl;
-            downloadLink.download = `${data.download.title}.mp4`;
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-
-            setTimeout(() => {
-                alert("✅ Sukses mendownload MP4!");
-            }, 500);
-        } else {
-            alert("❌ Gagal mendapatkan link MP4.");
+    function startDownload() {
+        if (!downloadUrl) {
+            alert("Tidak ada file untuk diunduh.");
+            return;
         }
-    } catch (error) {
-        alert("❌ Error saat mengunduh MP4.");
+
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "video.mp4"; // Bisa diubah sesuai format file
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        alert("Sukses Mendownload!");
     }
-}
+});
