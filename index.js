@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultContainer = document.getElementById("result");
     const debugContainer = document.getElementById("debug");
 
-    let downloadUrl = ""; // Akan menyimpan URL hasil dari API
-
     getInfoBtn.addEventListener("click", async () => {
         const videoUrl = inputUrl.value.trim();
         if (!videoUrl) {
@@ -34,39 +32,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 debugContainer.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
             }
 
-            if (!data || !data.result || data.result.length === 0) {
+            if (!data || data.error || !data.medias || data.medias.length === 0) {
                 resultContainer.innerHTML = "<p>Gagal mendapatkan data video.</p>";
                 return;
             }
 
-            // Ambil data pertama (bisa disesuaikan jika ada banyak format)
-            const videoData = data.result[0];
-            downloadUrl = videoData.url;
+            // Ambil informasi utama
+            const videoTitle = data.title || "Judul Tidak Tersedia";
+            const videoThumbnail = data.thumbnail || "";
+            const mediaOptions = data.medias.map((media, index) => `
+                <div>
+                    <p><b>Format:</b> ${media.extension.toUpperCase()} (${media.quality || "Unknown"})</p>
+                    <button class="downloadBtn" data-url="${media.url}">Download</button>
+                </div>
+            `).join("");
 
             resultContainer.innerHTML = `
-                <h3>${videoData.title || "Judul Tidak Tersedia"}</h3>
-                <img src="${videoData.thumbnail || ""}" alt="Thumbnail">
-                <p>Format: ${videoData.type || "Tidak diketahui"}</p>
-                <button id="startDownload">Download</button>
+                <h3>${videoTitle}</h3>
+                <img src="${videoThumbnail}" alt="Thumbnail">
+                ${mediaOptions}
             `;
 
-            // Event listener untuk tombol download
-            document.getElementById("startDownload").addEventListener("click", startDownload);
+            // Tambahkan event listener ke tombol download
+            document.querySelectorAll(".downloadBtn").forEach(button => {
+                button.addEventListener("click", (event) => {
+                    const downloadUrl = event.target.getAttribute("data-url");
+                    startDownload(downloadUrl);
+                });
+            });
+
         } catch (error) {
             console.error("Error:", error);
             resultContainer.innerHTML = "<p>Terjadi kesalahan. Coba lagi.</p>";
         }
     });
 
-    function startDownload() {
-        if (!downloadUrl) {
+    function startDownload(url) {
+        if (!url) {
             alert("Tidak ada file untuk diunduh.");
             return;
         }
 
         const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = "video.mp4"; // Bisa diubah sesuai format file
+        a.href = url;
+        a.download = "download.mp4"; // Bisa diubah sesuai format file
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -74,4 +83,3 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Sukses Mendownload!");
     }
 });
-
