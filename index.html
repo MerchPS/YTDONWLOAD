@@ -32,7 +32,9 @@
             document.getElementById("result").innerHTML = "";
             
             try {
-                const response = await axios.get(`https://ditzdevs-ytdl-api.hf.space/api/info?url=${encodeURIComponent(url)}`);
+                const response = await axios.post("https://ditzdevs-ytdl-api.hf.space/api/info", {
+                    url: url
+                });
                 
                 document.getElementById("loading").classList.add("hidden");
                 if (response.data && response.data.title) {
@@ -52,6 +54,7 @@
             } catch (error) {
                 document.getElementById("loading").classList.add("hidden");
                 document.getElementById("result").innerHTML = "<p class='text-red-400'>Error dalam pengambilan data.</p>";
+                console.error(error);
             }
         }
 
