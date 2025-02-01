@@ -8,7 +8,7 @@ async function fetchVideoInfo() {
     const resultElement = document.getElementById('result');
 
     if (!urlInput) {
-        alert('Please enter a YouTube URL');
+        alert('Silakan masukkan URL YouTube');
         return;
     }
 
@@ -34,17 +34,18 @@ async function fetchVideoInfo() {
             return;
         }
 
+        const title = data.title || "Judul tidak ditemukan";
         const thumbnailUrl = data.thumbnail ? data.thumbnail[0].url : '';
 
         resultElement.innerHTML = `
-            <h2 class='text-xl font-bold text-blue-400'>${data.title}</h2>
+            <h2 class='text-xl font-bold text-blue-400'>${title}</h2>
             <img src="${thumbnailUrl}" class="thumbnail"/>
             <button onclick="downloadMP3('${urlInput}')" class='btn-green'>Download MP3</button>
             <button onclick="downloadMP4('${urlInput}')" class='btn-yellow'>Download MP4</button>
         `;
     } catch (error) {
         loadingElement.classList.add('hidden');
-        resultElement.innerHTML = `<p class='text-red-500'>Failed to fetch video info.</p>`;
+        resultElement.innerHTML = `<p class='text-red-500'>Gagal mengambil info video.</p>`;
     }
 }
 
@@ -54,12 +55,21 @@ async function downloadMP3(url) {
         const data = await response.json();
 
         if (data.status && data.download && data.download.downloadUrl) {
-            window.location.href = data.download.downloadUrl;
+            const downloadLink = document.createElement("a");
+            downloadLink.href = data.download.downloadUrl;
+            downloadLink.download = `${data.download.title}.mp3`; 
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            setTimeout(() => {
+                alert("✅ Sukses mendownload MP3!");
+            }, 500);
         } else {
-            alert("Failed to get MP3 download link.");
+            alert("❌ Gagal mendapatkan link MP3.");
         }
     } catch (error) {
-        alert("Error downloading MP3.");
+        alert("❌ Error saat mengunduh MP3.");
     }
 }
 
@@ -69,11 +79,20 @@ async function downloadMP4(url) {
         const data = await response.json();
 
         if (data.status && data.download && data.download.downloadUrl) {
-            window.location.href = data.download.downloadUrl;
+            const downloadLink = document.createElement("a");
+            downloadLink.href = data.download.downloadUrl;
+            downloadLink.download = `${data.download.title}.mp4`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            setTimeout(() => {
+                alert("✅ Sukses mendownload MP4!");
+            }, 500);
         } else {
-            alert("Failed to get MP4 download link.");
+            alert("❌ Gagal mendapatkan link MP4.");
         }
     } catch (error) {
-        alert("Error downloading MP4.");
+        alert("❌ Error saat mengunduh MP4.");
     }
 }
