@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YTDNW - YouTube Downloader</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script defer src="index.js"></script>
     <style>
         .fade-enter {
@@ -20,7 +19,7 @@
 <body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
     <h1 class="text-3xl font-bold mb-4 text-blue-400">YouTube Downloader</h1>
     <input id="yt-url" type="text" placeholder="Enter YouTube URL" class="p-2 w-80 text-black rounded-md mb-4">
-    <button onclick="fetchVideoInfo()" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Get Video Info</button>
+    <button id="fetch-info" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Get Video Info</button>
     <div id="loading" class="hidden text-blue-400 mt-4">Loading...</div>
     <div id="result" class="fade-enter mt-4"></div>
 </body>
