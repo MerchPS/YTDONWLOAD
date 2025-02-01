@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const debug = true; // Set ke false jika tidak ingin melihat log di halaman
+    const debug = true; // Ubah ke false jika tidak ingin melihat log di halaman
 
     const inputUrl = document.getElementById("urlInput");
     const getInfoBtn = document.getElementById("getInfoBtn");
     const resultContainer = document.getElementById("result");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const debugContainer = document.getElementById("debug"); // Untuk menampilkan debug info
+    const debugContainer = document.getElementById("debug");
+
     let downloadUrl = ""; // Akan menyimpan URL hasil dari API
 
     getInfoBtn.addEventListener("click", async () => {
@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             resultContainer.innerHTML = "<p>Loading...</p>";
+
             const response = await fetch("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", {
                 method: "POST",
                 headers: {
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 debugContainer.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
             }
 
-            if (!data || !data.result || !data.result[0]) {
+            if (!data || !data.result || data.result.length === 0) {
                 resultContainer.innerHTML = "<p>Gagal mendapatkan data video.</p>";
                 return;
             }
@@ -44,12 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultContainer.innerHTML = `
                 <h3>${videoData.title || "Judul Tidak Tersedia"}</h3>
-                <img src="${videoData.thumbnail || ""}" alt="Thumbnail" style="width:100%; max-width:400px; border-radius:10px;">
+                <img src="${videoData.thumbnail || ""}" alt="Thumbnail">
                 <p>Format: ${videoData.type || "Tidak diketahui"}</p>
                 <button id="startDownload">Download</button>
             `;
 
-            // Event listener untuk download button
+            // Event listener untuk tombol download
             document.getElementById("startDownload").addEventListener("click", startDownload);
         } catch (error) {
             console.error("Error:", error);
@@ -73,3 +74,4 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Sukses Mendownload!");
     }
 });
+
