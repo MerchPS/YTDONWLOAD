@@ -1,26 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YTDNW - YouTube Downloader</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="index.js"></script>
+    <title>YouTube Downloader</title>
+    <script src="index.js" defer></script>
     <style>
-        .fade-enter {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 20px;
         }
-        .fade-enter-active {
-            opacity: 1;
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .btn-blue { background-color: #007bff; color: white; }
+        .btn-green { background-color: #28a745; color: white; }
+        .btn-yellow { background-color: #ffc107; color: black; }
+        .hidden { display: none; }
+        .thumbnail {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 10px;
+            margin: 10px 0;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-3xl font-bold mb-4 text-blue-400">YouTube Downloader</h1>
-    <input id="yt-url" type="text" placeholder="Enter YouTube URL" class="p-2 w-80 text-black rounded-md mb-4">
-    <button id="fetch-info" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Get Video Info</button>
-    <div id="loading" class="hidden text-blue-400 mt-4">Loading...</div>
-    <div id="result" class="fade-enter mt-4"></div>
+<body>
+
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        <input type="text" id="yt-url" placeholder="Masukkan URL YouTube">
+        <button id="fetch-info" class="btn-blue">Get Info</button>
+
+        <div id="loading" class="hidden">
+            <p>Loading...</p>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
 </body>
 </html>
