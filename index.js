@@ -1,30 +1,46 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-const path = require('path');
-
-const app = express();
-app.use(express.json());
-app.use(cors());
-app.use(express.static('public'));
-
-app.post('/api/info', async (req, res) => {
-    const { url } = req.body;
-    if (!url) return res.status(400).json({ error: 'URL is required' });
+async function fetchVideoInfo() {
+    const urlInput = document.getElementById('yt-url').value;
+    const loadingElement = document.getElementById('loading');
+    const resultElement = document.getElementById('result');
+    
+    if (!urlInput) {
+        alert('Please enter a YouTube URL');
+        return;
+    }
+    
+    loadingElement.classList.remove('hidden');
+    resultElement.innerHTML = '';
     
     try {
-        const response = await axios.post('https://ditzdevs-ytdl-api.hf.space/api/info', { url });
-        res.json(response.data);
+        const response = await fetch('https://ytdonwload-git-main-merchps-projects.vercel.app/api/info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: urlInput })
+        });
+        
+        const data = await response.json();
+        loadingElement.classList.add('hidden');
+        
+        if (data.error) {
+            resultElement.innerHTML = `<p class='text-red-500'>Error: ${data.error}</p>`;
+            return;
+        }
+        
+        resultElement.innerHTML = `
+            <h2 class='text-xl font-bold text-blue-400'>${data.title}</h2>
+            <button onclick="downloadMP3('${urlInput}')" class='bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded mt-2'>Download MP3</button>
+            <button onclick="downloadMP4('${urlInput}')" class='bg-yellow-500 hover:bg-yellow-700 text-white py-2 px-4 rounded mt-2'>Download MP4</button>
+        `;
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch video info', details: error.message });
+        loadingElement.classList.add('hidden');
+        resultElement.innerHTML = `<p class='text-red-500'>Failed to fetch video info.</p>`;
     }
-});
+}
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+function downloadMP3(url) {
+    window.location.href = `https://ytdonwload-git-main-merchps-projects.vercel.app/api/ytmp3?url=${encodeURIComponent(url)}`;
+}
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+function downloadMP4(url) {
+    window.location.href = `https://ytdonwload-git-main-merchps-projects.vercel.app/api/ytmp4?url=${encodeURIComponent(url)}&reso=720p`;
+}
