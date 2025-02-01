@@ -16,11 +16,15 @@ async function fetchVideoInfo() {
     resultElement.innerHTML = '';
     
     try {
-        const response = await fetch('https://ditzdevs-ytdl-api.hf.space/api/info', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: urlInput })
-        });
+        let response = await fetch(`https://ditzdevs-ytdl-api.hf.space/api/info?url=${encodeURIComponent(urlInput)}`);
+        
+        if (!response.ok) {
+            response = await fetch('https://ditzdevs-ytdl-api.hf.space/api/info', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: urlInput })
+            });
+        }
         
         const data = await response.json();
         loadingElement.classList.add('hidden');
