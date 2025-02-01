@@ -16,7 +16,7 @@ async function fetchVideoInfo() {
     resultElement.innerHTML = '';
     
     try {
-        const response = await fetch('/api/info', {
+        const response = await fetch('https://ditzdevs-ytdl-api.hf.space/api/info', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: urlInput })
@@ -42,9 +42,9 @@ async function fetchVideoInfo() {
 }
 
 function downloadMP3(url) {
-    window.location.href = `/api/ytmp3?url=${encodeURIComponent(url)}`;
+    window.location.href = `https://ditzdevs-ytdl-api.hf.space/api/ytmp3?url=${encodeURIComponent(url)}`;
 }
 
 function downloadMP4(url) {
-    window.location.href = `/api/ytmp4?url=${encodeURIComponent(url)}&reso=720p`;
+    window.location.href = `https://ditzdevs-ytdl-api.hf.space/api/ytmp4?url=${encodeURIComponent(url)}&reso=720p`;
 }
