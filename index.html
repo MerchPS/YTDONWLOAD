@@ -1,60 +1,24 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube/TikTok Downloader</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #121212;
-            color: white;
-            margin: 20px;
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
-        }
-        button {
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #result img {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        #debug {
-            margin-top: 20px;
-            text-align: left;
-            background: #333;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-            max-width: 600px;
-            margin: auto;
-        }
-    </style>
+    <title>YouTube Downloader</title>
+    <script src="script.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-3xl font-bold mb-6">YouTube MP3/MP4 Downloader</h1>
+    <form id="downloadForm" class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <input type="text" id="youtubeUrl" placeholder="Masukkan URL YouTube" class="p-2 rounded-lg w-72 text-black" required>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg mt-4 w-full">Cari Video</button>
+    </form>
 
-    <h1>Downloader MP4/MP3</h1>
-    <input type="text" id="urlInput" placeholder="Masukkan URL YouTube/TikTok">
-    <button id="getInfoBtn">Get Info</button>
+    <div id="result" class="mt-6 text-center"></div>
 
-    <div id="result"></div>
-    <div id="debug"></div>
-
-    <script src="index.js"></script>
-
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center text-2xl hidden">
+        <span>Loading...</span>
+    </div>
 </body>
 </html>
