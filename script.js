@@ -1,41 +1,32 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('downloadForm');
-    const urlInput = document.getElementById('youtubeUrl');
-    const resultContainer = document.getElementById('result');
-    const loadingScreen = document.getElementById('loadingScreen');
+export default async function handler(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Metode tidak diizinkan' });
+    }
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const youtubeUrl = urlInput.value.trim();
+    const { url } = req.body;
 
-        if (!youtubeUrl) {
-            alert('Masukkan URL YouTube terlebih dahulu!');
-            return;
+    if (!url) {
+        return res.status(400).json({ error: 'URL YouTube diperlukan!' });
+    }
+
+    try {
+        // Coba cek apakah API eksternal bisa diakses
+        const response = await fetch(`https://ditzdevs-ytdl-api.hf.space/api/download?url=${encodeURIComponent(url)}`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            return res.status(500).json({ error: `API eksternal gagal: ${errorText}` });
         }
 
-        loadingScreen.style.display = 'flex';
+        const data = await response.json();
 
-        try {
-            const response = await fetch('/api/download', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ url: youtubeUrl })
-            });
-
-            if (!response.ok) throw new Error('Gagal mendownload video.');
-
-            const data = await response.json();
-            loadingScreen.style.display = 'none';
-
-            resultContainer.innerHTML = `
-                <h2 class="text-xl font-bold">Download Berhasil!</h2>
-                <a href="${data.downloadUrl}" class="bg-green-500 text-white px-4 py-2 rounded-lg mt-4 inline-block" download>Download MP3</a>
-            `;
-        } catch (error) {
-            loadingScreen.style.display = 'none';
-            alert('Terjadi kesalahan: ' + error.message);
+        if (data.error) {
+            return res.status(500).json({ error: data.error });
         }
-    });
-});
+
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('Error di backend:', error);
+        res.status(500).json({ error: 'Gagal mengambil data dari API eksternal. Detail: ' + error.message });
+    }
+}
