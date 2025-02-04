@@ -13,11 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Tampilkan loading screen
         loadingScreen.style.display = 'flex';
 
         try {
-            const response = await fetch('http://localhost:3000/download', {
+            const response = await fetch('/api/download', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -28,11 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Gagal mendownload video.');
 
             const data = await response.json();
-
-            // Sembunyikan loading screen
             loadingScreen.style.display = 'none';
 
-            // Tampilkan link download
             resultContainer.innerHTML = `
                 <h2 class="text-xl font-bold">Download Berhasil!</h2>
                 <a href="${data.downloadUrl}" class="bg-green-500 text-white px-4 py-2 rounded-lg mt-4 inline-block" download>Download MP3</a>
